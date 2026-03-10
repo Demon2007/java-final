@@ -1,0 +1,61 @@
+{% extends "learning/base.html" %}
+{% load static %}
+
+{% block title %}{{ lesson.title }} - Java Learning{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'learning/css/lesson_detail.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="lesson-shell">
+  <div class="lesson-header">
+    <div class="lesson-header__top">
+      <h1 class="lesson-h1">{{ lesson.title }}</h1>
+
+      <div class="lesson-actions">
+        {% if user.is_authenticated %}
+          <button
+            class="btn"
+            id="completeLessonBtn"
+            type="button"
+            {% if is_completed %}disabled{% endif %}
+          >
+            {% if is_completed %}
+              ✅ Уже пройден
+            {% else %}
+              Отметить как пройден
+            {% endif %}
+          </button>
+        {% else %}
+          <a class="btn" href="{% url 'login' %}?next={{ request.path }}">
+            Войти, чтобы сохранить прогресс
+          </a>
+        {% endif %}
+
+        <a class="btn outline" href="{% url 'lessons_list' %}">
+          Назад к урокам
+        </a>
+      </div>
+    </div>
+
+    {% if lesson.description %}
+      <p class="lesson-subtitle">{{ lesson.description }}</p>
+    {% endif %}
+  </div>
+
+  <div
+    class="lesson-content"
+    id="lessonContent"
+    data-raw="{{ lesson.content|escape }}"
+  >
+    <div class="muted">Загрузка...</div>
+  </div>
+</div>
+
+<script>
+  window.CURRENT_LESSON_ID = "{{ lesson.id }}";
+  window.COMPLETE_LESSON_URL = "{% url 'api_complete_lesson' lesson.id %}";
+</script>
+<script src="{% static 'learning/js/lesson_detail.js' %}?v=3"></script>
+{% endblock %}

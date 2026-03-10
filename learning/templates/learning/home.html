@@ -1,0 +1,346 @@
+{% extends "learning/base.html" %} {% load static %} {% block title %}Главная -
+Java Learning{% endblock %} {% block head %}
+<link rel="stylesheet" href="{% static 'learning/css/home.css' %}" />
+{% endblock %} {% block content %}
+
+<section class="hero">
+  <div class="hero__content">
+    <div class="hero__badge">Платформа обучения</div>
+    <h1 class="hero__title">Java Learning</h1>
+    <p class="hero__subtitle">
+      Уроки + практика + тесты. Проходи темы по порядку и отслеживай прогресс.
+    </p>
+
+    <div class="hero__actions">
+      <a class="btn" href="{% url 'lessons_list' %}">Перейти к урокам</a>
+      <a class="btn outline" href="{% url 'lessons_list' %}#progress"
+        >Мой прогресс</a
+      >
+    </div>
+
+    <div class="hero__stats">
+      <div class="stat">
+        <div class="stat__num">{{ latest_lessons|length }}</div>
+        <div class="stat__label">последние уроки</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">Java</div>
+        <div class="stat__label">основы + практика</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">10–20</div>
+        <div class="stat__label">мин на урок</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__card">
+    <div class="heroCard">
+      <div class="heroCard__top">
+        <div class="heroCard__icon">☕</div>
+        <div>
+          <div class="heroCard__title">Совет</div>
+          <div class="heroCard__text">
+            Проходи уроки последовательно — так прогресс будет быстрее.
+          </div>
+        </div>
+      </div>
+
+      <div class="heroCard__progress">
+        <div class="heroCard__progressRow">
+          <span>Прогресс</span>
+          <span class="heroCard__progressValue" id="homeProgressText"
+            >{{ completed_count }} из {{ total_lessons }} уроков ({{ progress_percent }}%)</span>
+        </div>
+        <div class="heroCard__bar">
+          <div
+            class="heroCard__fill"
+            id="homeProgressFill"
+            style="width:
+            {{ progress_percent }}%;"
+          ></div>
+        </div>
+      </div>
+
+      <div class="heroCard__note">
+        {% if user.is_authenticated %} Прогресс сохраняется в аккаунте. {% else
+        %} Войди в аккаунт чтобы сохранять прогресс. {% endif %}
+      </div>
+      <div class="heroCard__terminal">
+        <div class="terminal__head">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <pre class="terminal__code">
+      <code id="typingCode"></code>
+        </pre>
+
+        <div class="terminal__output">
+          <span class="terminal__label">Output:</span>
+          <span id="typingOutput"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ===== HOW IT WORKS ===== -->
+<section class="section how">
+  <div class="section__head">
+    <h2 class="section__title">Как это работает</h2>
+  </div>
+
+  <div class="how__grid">
+    <div class="how__card">
+      <div class="how__num">01</div>
+      <h3>Изучи тему</h3>
+      <p>Читай структурированные уроки с примерами и объяснениями.</p>
+    </div>
+
+    <div class="how__card">
+      <div class="how__num">02</div>
+      <h3>Практика в редакторе</h3>
+      <p>Пиши код прямо в браузере и запускай его на сервере.</p>
+    </div>
+
+    <div class="how__card">
+      <div class="how__num">03</div>
+      <h3>Отслеживай прогресс</h3>
+      <p>Смотри прогресс, проходи уровни и двигайся вперёд.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="section features">
+  <div class="section__head">
+    <h2 class="section__title">Почему Java Learning?</h2>
+  </div>
+
+  <div class="features__grid">
+    <div class="feature">
+      <div class="feature__icon">⚡</div>
+      <div>
+        <div class="feature__title">Быстрая практика</div>
+        <div class="feature__text">
+          Мгновенный запуск кода без установки IDE.
+        </div>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="feature__icon">📈</div>
+      <div>
+        <div class="feature__title">Система прогресса</div>
+        <div class="feature__text">Следи за своими достижениями.</div>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="feature__icon">🎯</div>
+      <div>
+        <div class="feature__title">Чёткая структура</div>
+        <div class="feature__text">От beginner до advanced без хаоса.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ROADMAP ===== -->
+<section class="section roadmap">
+  <div class="section__head">
+    <h2 class="section__title">Путь обучения</h2>
+    <div class="section__hint">Двигайся по темам как по уровню в игре</div>
+  </div>
+
+  <div class="roadmap__grid">
+    <div class="road">
+      <div class="road__tag">Level 1</div>
+      <div class="road__title">Основы синтаксиса</div>
+      <div class="road__text">Переменные, типы, операторы, условия, циклы.</div>
+      <div class="road__meta">
+        <span class="badge">Beginner</span>
+        <span class="badge ghost">~ 1–2 дня</span>
+      </div>
+    </div>
+
+    <div class="road">
+      <div class="road__tag">Level 2</div>
+      <div class="road__title">Методы и структуры</div>
+      <div class="road__text">
+        Методы, массивы, строки, работа с вводом/выводом.
+      </div>
+      <div class="road__meta">
+        <span class="badge">Middle</span>
+        <span class="badge ghost">~ 3–5 дней</span>
+      </div>
+    </div>
+
+    <div class="road">
+      <div class="road__tag">Level 3</div>
+      <div class="road__title">ООП и практика</div>
+      <div class="road__text">
+        Классы, объекты, наследование, интерфейсы, задачи.
+      </div>
+      <div class="road__meta">
+        <span class="badge">Advanced</span>
+        <span class="badge ghost">~ 1–2 недели</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="section faq">
+  <div class="section__head">
+    <h2 class="section__title">FAQ</h2>
+    <div class="section__hint">Ответы на частые вопросы</div>
+  </div>
+
+  <div class="faq__grid">
+    <details class="faq__item">
+      <summary>Нужно ли устанавливать Java/IDE?</summary>
+      <p>Нет. Ты можешь писать и запускать код в редакторе прямо на сайте.</p>
+    </details>
+
+    <details class="faq__item">
+      <summary>Где сохраняется прогресс?</summary>
+      <p>
+        Сейчас — в <code>localStorage</code> браузера. Потом можно подключить
+        аккаунты и БД.
+      </p>
+    </details>
+
+    <details class="faq__item">
+      <summary>Можно ли учиться с телефона?</summary>
+      <p>
+        Да, сайт адаптивный. На телефоне редактор проще, но уроки читаются
+        отлично.
+      </p>
+    </details>
+
+    <details class="faq__item">
+      <summary>Если я пропущу урок?</summary>
+      <p>
+        Лучше идти по порядку. Но можно открыть любой урок и пройти выборочно.
+      </p>
+    </details>
+  </div>
+</section>
+
+<!-- ===== EDITORS ===== -->
+<section class="section editors">
+  <div class="section__head">
+    <h2 class="section__title">Популярные Java редакторы</h2>
+    <div class="section__hint">
+      Если хочешь учиться локально — вот лучшие IDE для Java
+    </div>
+  </div>
+
+  <div class="editors__grid">
+    <!-- VS CODE -->
+    <div class="editor-card">
+      <div class="editor-card__icon">🧩</div>
+      <div class="editor-card__title">Visual Studio Code</div>
+      <div class="editor-card__desc">
+        Лёгкий и быстрый редактор. Поддержка Java через расширения.
+      </div>
+      <a
+        class="btn btn-primary"
+        target="_blank"
+        href="https://code.visualstudio.com/Download"
+      >
+        Скачать →
+      </a>
+    </div>
+
+    <!-- INTELLIJ -->
+    <div class="editor-card">
+      <div class="editor-card__icon">🚀</div>
+      <div class="editor-card__title">IntelliJ IDEA</div>
+      <div class="editor-card__desc">
+        Профессиональная IDE для Java. Очень мощная и удобная.
+      </div>
+      <a
+        class="btn btn-primary"
+        target="_blank"
+        href="https://www.jetbrains.com/idea/download/"
+      >
+        Скачать →
+      </a>
+    </div>
+
+    <!-- ECLIPSE -->
+    <div class="editor-card">
+      <div class="editor-card__icon">🌑</div>
+      <div class="editor-card__title">Eclipse</div>
+      <div class="editor-card__desc">
+        Классическая Java IDE. Подходит для больших проектов.
+      </div>
+      <a
+        class="btn btn-primary"
+        target="_blank"
+        href="https://www.eclipse.org/downloads/"
+      >
+        Скачать →
+      </a>
+    </div>
+
+    <!-- NETBEANS -->
+    <div class="editor-card">
+      <div class="editor-card__icon">💻</div>
+      <div class="editor-card__title">Apache NetBeans</div>
+      <div class="editor-card__desc">
+        Простая и удобная IDE для начинающих и студентов.
+      </div>
+      <a
+        class="btn btn-primary"
+        target="_blank"
+        href="https://netbeans.apache.org/download/index.html"
+      >
+        Скачать →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section cta">
+  <div class="cta__inner">
+    <h2>Готов начать изучать Java?</h2>
+    <p>Перейди к урокам и начни уже сегодня.</p>
+    <a class="btn btn-primary" href="{% url 'lessons_list' %}">
+      Начать обучение →
+    </a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__head">
+    <h2 class="section__title">Последние уроки</h2>
+    <a class="section__link" href="{% url 'lessons_list' %}">Все уроки →</a>
+  </div>
+
+  {% if latest_lessons %}
+  <div class="cards">
+    {% for lesson in latest_lessons %}
+    <a class="card" href="{% url 'lesson_detail' lesson.id %}">
+      <div class="card__title">{{ lesson.title }}</div>
+      <div class="card__desc">
+        {{ lesson.description|default:"Описание пока не
+        заполнено"|truncatechars:120 }}
+      </div>
+      <div class="card__footer">
+        <span class="pill">Открыть</span>
+        <span class="card__arrow">→</span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">Уроков пока нет. Добавь уроки через админку.</div>
+  {% endif %}
+</section>
+
+<script src="{% static 'learning/js/home.js' %}"></script>
+{% endblock %}

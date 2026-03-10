@@ -1,0 +1,171 @@
+{% extends "learning/base.html" %} {% load static %} {% block title %}Тест: {{
+lesson.title }} - Java Learning{% endblock %} {% block content %}
+<div class="page-head">
+  <h1 class="page-title">Тест</h1>
+  <p class="page-subtitle">Урок: <b>{{ lesson.title }}</b></p>
+</div>
+
+{% if questions|length == 0 %}
+<div class="card card-pad">
+  <p>
+    Для этого урока пока нет вопросов. Добавь их в админке (Вопросы тестов →
+    Урок).
+  </p>
+</div>
+{% else %} {% if submitted %}
+<div class="card card-pad" style="margin-bottom: 16px">
+  <h3 style="margin-bottom: 8px">Результат</h3>
+  <p><b>{{ correct_count }}</b> из <b>{{ total }}</b> ({{ percent }}%)</p>
+
+  <button
+    class="btn btn-primary"
+    type="button"
+    onclick="markTestCompleted('{{ lesson.id }}')"
+    style="margin-top: 10px"
+  >
+    Отметить тест пройденным
+  </button>
+</div>
+{% endif %}
+
+<form method="post" class="quiz">
+  {% csrf_token %} {% for q in questions %}
+  <div class="card card-pad glow-border" style="margin-bottom: 14px">
+    <div style="font-weight: 800; margin-bottom: 10px">
+      {{ forloop.counter }}. {{ q.question }}
+    </div>
+
+    <label class="quiz-opt">
+      <input
+        type="radio"
+        name="q_{{ q.id }}"
+        value="A"
+        {%
+        if
+        submitted
+        and
+        q.picked=""
+        ="A"
+        %}checked{%
+        endif
+        %}
+      />
+      <span>A) {{ q.option_a }}</span>
+    </label>
+
+    <label class="quiz-opt">
+      <input
+        type="radio"
+        name="q_{{ q.id }}"
+        value="B"
+        {%
+        if
+        submitted
+        and
+        q.picked=""
+        ="B"
+        %}checked{%
+        endif
+        %}
+      />
+      <span>B) {{ q.option_b }}</span>
+    </label>
+
+    <label class="quiz-opt">
+      <input
+        type="radio"
+        name="q_{{ q.id }}"
+        value="C"
+        {%
+        if
+        submitted
+        and
+        q.picked=""
+        ="C"
+        %}checked{%
+        endif
+        %}
+      />
+      <span>C) {{ q.option_c }}</span>
+    </label>
+
+    <label class="quiz-opt">
+      <input
+        type="radio"
+        name="q_{{ q.id }}"
+        value="D"
+        {%
+        if
+        submitted
+        and
+        q.picked=""
+        ="D"
+        %}checked{%
+        endif
+        %}
+      />
+      <span>D) {{ q.option_d }}</span>
+    </label>
+
+    {% if submitted %}
+    <div
+      style="
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      "
+    >
+      {% if q.picked == q.correct %}
+      <div style="font-weight: 700">✅ Верно</div>
+      {% else %}
+      <div style="font-weight: 700">
+        ❌ Неверно. Правильный вариант: {{ q.correct }}
+      </div>
+      {% endif %} {% if q.explanation %}
+      <div class="muted" style="margin-top: 8px">{{ q.explanation }}</div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  <button class="btn btn-primary" type="submit">Проверить</button>
+</form>
+
+<style>
+  .quiz-opt {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 0;
+    cursor: pointer;
+    user-select: none;
+  }
+  .quiz-opt input {
+    margin-top: 2px;
+    transform: scale(1.1);
+  }
+</style>
+
+<script>
+  // если у тебя уже есть markTestCompleted в lessons.js — отлично.
+  // На всякий случай страховка:
+  window.markTestCompleted =
+    window.markTestCompleted ||
+    function (testId) {
+      try {
+        const raw = localStorage.getItem("completedTests");
+        const arr = raw ? JSON.parse(raw) : [];
+        const s = arr.map(String);
+        if (!s.includes(String(testId))) {
+          arr.push(String(testId));
+          localStorage.setItem("completedTests", JSON.stringify(arr));
+        }
+        alert("Тест отмечен как пройден ✅");
+      } catch (e) {
+        console.log(e);
+      }
+    };
+</script>
+
+{% endif %} {% endblock %}

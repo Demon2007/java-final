@@ -1,0 +1,41 @@
+{% extends "learning/base.html" %}
+{% load static %}
+
+{% block title %}Модули - Java Learning{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'learning/css/modules.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1 class="page-title">Модули</h1>
+  <p class="page-subtitle">Выбирай модуль и проходи уроки по порядку.</p>
+</div>
+
+<div class="modules-grid">
+  {% for module in modules %}
+    <a class="module-card card glow-border" href="{% url 'module_detail' module.id %}">
+      <div class="module-top">
+        <div class="module-title">{{ module.title }}</div>
+        <div class="module-order">#{{ module.order }}</div>
+      </div>
+
+      {% if module.description %}
+        <div class="module-desc">{{ module.description }}</div>
+      {% else %}
+        <div class="module-desc muted">Описание не добавлено</div>
+      {% endif %}
+
+      <div class="module-meta">
+        <span class="chip">Уроков: {{ module.lessons.count }}</span>
+        <span class="chip chip-progress" data-module-id="{{ module.id }}">Прогресс: —</span>
+      </div>
+    </a>
+  {% empty %}
+    <p>Модулей пока нет. Добавь модули в админке.</p>
+  {% endfor %}
+</div>
+
+<script src="{% static 'learning/js/modules.js' %}"></script>
+{% endblock %}

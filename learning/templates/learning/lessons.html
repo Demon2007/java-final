@@ -1,0 +1,142 @@
+{% extends "learning/base.html" %}
+{% load static %}
+
+{% block title %}Уроки - Java Learning{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'learning/css/lessons.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1 class="page-title">Уроки</h1>
+  <p class="page-subtitle">
+    Выбирай уроки и проходи последовательно — прогресс сохранится.
+  </p>
+</div>
+
+<div class="lessons-layout">
+  <aside class="sidebar">
+    <div class="panel">
+      <div class="progress-wrap" id="progress">
+        <div class="progress-row">
+          <span class="progress-label">Ваш прогресс:</span>
+          <span class="progress-text">
+            {{ completed_count }} из {{ total_lessons }} уроков ({{ progress_percent }}%)
+          </span>
+        </div>
+
+        <div class="progress-bar">
+          <div
+            id="progressFill"
+            class="progress-fill"
+            style="width: {{ progress_percent }}%;"
+          ></div>
+        </div>
+      </div>
+
+      <div class="filters">
+        <button class="filter-btn active" data-filter-level="all">Все</button>
+        <button class="filter-btn" data-filter-level="beginner">Начинающий</button>
+        <button class="filter-btn" data-filter-level="middle">Средний</button>
+        <button class="filter-btn" data-filter-level="advanced">Продвинутый</button>
+      </div>
+
+      <div class="lesson-tools">
+        <div class="search-wrap">
+          <span class="search-ico">🔎</span>
+          <input
+            id="lessonSearch"
+            class="lesson-search-input"
+            type="text"
+            placeholder="Поиск по названию и описанию..."
+            autocomplete="off"
+          />
+          <button id="clearSearch" class="clear-search-btn" type="button">
+            Очистить
+          </button>
+        </div>
+
+        <div class="sort-wrap">
+          <label for="lessonSort" class="sort-label">Сортировка:</label>
+          <select id="lessonSort" class="lesson-sort-select">
+            <option value="order_asc">По порядку (↑)</option>
+            <option value="order_desc">По порядку (↓)</option>
+            <option value="title_asc">По названию (A→Z)</option>
+            <option value="title_desc">По названию (Z→A)</option>
+            <option value="newest">Сначала новые</option>
+            <option value="oldest">Сначала старые</option>
+          </select>
+        </div>
+
+        <div class="lesson-tools-meta">
+          <span id="resultsCount" class="results-count">
+            Найдено: {{ total_lessons }} урок(ов)
+          </span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <section class="content">
+    <div class="lessons-list">
+      {% for lesson in lessons %}
+      <div
+        class="lesson-card reveal {% if lesson.id in completed_ids %}completed{% endif %}"
+        data-lesson-id="{{ lesson.id }}"
+        data-level="{{ lesson.level|default:'beginner' }}"
+        data-title="{{ lesson.title|escape }}"
+        data-desc="{{ lesson.description|default:''|escape }}"
+        data-order="{{ lesson.order }}"
+        data-created="{{ lesson.created_at|date:'c' }}"
+      >
+        <div class="lesson-left">
+          <div class="lesson-badge">{{ forloop.counter }}</div>
+        </div>
+
+        <div class="lesson-body">
+          <div class="lesson-level">
+            {% if lesson.level == "beginner" %}
+              НАЧИНАЮЩИЙ
+            {% elif lesson.level == "middle" %}
+              СРЕДНИЙ
+            {% elif lesson.level == "advanced" %}
+              ПРОДВИНУТЫЙ
+            {% else %}
+              НАЧИНАЮЩИЙ
+            {% endif %}
+          </div>
+
+          <div class="lesson-title js-title">{{ lesson.title }}</div>
+          <div class="lesson-desc js-desc">{{ lesson.description|default:"" }}</div>
+
+          <div class="lesson-footer">
+            <div class="lesson-status" id="status-{{ lesson.id }}">
+              {% if lesson.id in completed_ids %}
+                <span class="status-icon">●</span>
+                <span class="status-text">Пройден</span>
+              {% else %}
+                <span class="status-icon">○</span>
+                <span class="status-text">Не пройден</span>
+              {% endif %}
+            </div>
+
+            <a class="lesson-btn" href="{% url 'lesson_detail' lesson.id %}">
+              {% if lesson.id in completed_ids %}Повторить{% else %}Начать{% endif %}
+            </a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+        <p>Уроков пока нет. Добавь уроки в админке.</p>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<script>
+  window.IS_AUTH = {% if user.is_authenticated %}true{% else %}false{% endif %};
+  window.API_PROGRESS_URL = "{% url 'api_progress' %}";
+</script>
+<script src="{% static 'learning/js/lessons.js' %}?v=5"></script>
+{% endblock %}

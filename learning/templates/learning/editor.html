@@ -1,0 +1,81 @@
+{% extends "learning/base.html" %}
+{% load static %}
+
+{% block title %}Редактор{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'learning/css/editor.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="editor-page">
+
+  <div class="editor-head">
+    <div class="editor-head-left">
+      <h1 class="editor-title">Java Editor</h1>
+      <p class="editor-subtitle">
+        Ctrl+Enter — запустить. Код компилируется и выполняется на сервере (Django).
+      </p>
+    </div>
+
+    <div class="editor-toolbar">
+      <button class="btn" id="runBtn" type="button" title="Ctrl+Enter">
+        <span class="btn-icon">▶</span>
+        <span class="btn-text">Запустить</span>
+        <span class="btn-spinner" aria-hidden="true"></span>
+      </button>
+
+      <button class="btn outline" id="copyBtn" type="button">Скопировать</button>
+      <button class="btn outline danger" id="clearBtn" type="button">Очистить</button>
+    </div>
+  </div>
+
+  <div class="editor-grid">
+    <div class="editor-card">
+      <div class="tabs">
+        <button class="tab active" data-tab="main">Main.java</button>
+        <button class="tab" data-tab="helper">Helper.java</button>
+        <div class="tabs-right">
+          <span class="chip" id="statusChip">Готов</span>
+        </div>
+      </div>
+
+      <div class="editor-shell">
+        <div id="editor" class="monaco"></div>
+      </div>
+
+      <div class="hint">
+        Советы: класс должен называться <b>Main</b>. Ввод читается через <code>Scanner</code>.
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-section">
+        <div class="side-title">Ввод (stdin)</div>
+        <textarea id="stdin" class="io-area" spellcheck="false" placeholder="Например:
+5
+10 20 30 40 50"></textarea>
+      </div>
+
+      <div class="side-section">
+        <div class="side-title">Вывод</div>
+        <div class="output-wrap" id="outputWrap">
+          <pre class="output"><code id="output"></code></pre>
+        </div>
+
+        <div class="side-actions">
+          <button class="link-btn" id="clearOutBtn" type="button">Очистить вывод</button>
+          <button class="link-btn" id="sampleBtn" type="button">Пример с вводом</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  window.RUN_JAVA_URL = "{% url 'run_java' %}";
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+<script src="{% static 'learning/js/editor.js' %}?v=100"></script>
+{% endblock %}

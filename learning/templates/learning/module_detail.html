@@ -1,0 +1,72 @@
+{% extends "learning/base.html" %}
+{% load static %}
+
+{% block title %}{{ module.title }} - Java Learning{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'learning/css/modules.css' %}" />
+<link rel="stylesheet" href="{% static 'learning/css/lessons.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1 class="page-title">{{ module.title }}</h1>
+  <p class="page-subtitle">{{ module.description }}</p>
+</div>
+
+<div class="module-actions">
+  <a class="btn outline" href="{% url 'module_list' %}">← Назад к модулям</a>
+  <span class="chip chip-progress" data-module-id="{{ module.id }}">Прогресс: —</span>
+</div>
+
+<div class="lessons-list">
+  {% for lesson in lessons %}
+    <div
+      class="lesson-card reveal"
+      data-lesson-id="{{ lesson.id }}"
+      data-level="{{ lesson.level|default:'beginner' }}"
+      data-title="{{ lesson.title|escape }}"
+      data-desc="{{ lesson.description|default:''|escape }}"
+      data-order="{{ lesson.order }}"
+      data-created="{{ lesson.created_at|date:'c' }}"
+    >
+      <div class="lesson-left">
+        <div class="lesson-badge">{{ forloop.counter }}</div>
+      </div>
+
+      <div class="lesson-body">
+        <div class="lesson-level">
+          {% if lesson.level == "beginner" %}
+            НАЧИНАЮЩИЙ
+          {% elif lesson.level == "middle" %}
+            СРЕДНИЙ
+          {% elif lesson.level == "advanced" %}
+            ПРОДВИНУТЫЙ
+          {% else %}
+            НАЧИНАЮЩИЙ
+          {% endif %}
+        </div>
+
+        <div class="lesson-title js-title">{{ lesson.title }}</div>
+        <div class="lesson-desc js-desc">{{ lesson.description|default:"" }}</div>
+
+        <div class="lesson-footer">
+          <div id="status-{{ lesson.id }}" class="lesson-status">
+            <span class="status-icon">○</span>
+            <span class="status-text">Не пройден</span>
+          </div>
+          <a class="btn btn-primary" href="{% url 'quiz' lesson.id %}">Пройти тест</a>
+          <a class="lesson-btn" href="{% url 'lesson_detail' lesson.id %}">
+            Начать
+          </a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p>В этом модуле пока нет уроков.</p>
+  {% endfor %}
+</div>
+
+<script src="{% static 'learning/js/lessons.js' %}"></script>
+<script src="{% static 'learning/js/modules.js' %}"></script>
+{% endblock %}

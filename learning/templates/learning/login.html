@@ -1,0 +1,57 @@
+{% extends "learning/base.html" %}
+{% load static %}
+
+{% block title %}Вход - Java Learning{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'learning/css/login.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="auth-page reveal">
+  <div class="auth-wrap auth-wrap--single">
+    <div class="auth-card">
+      <div class="auth-glow"></div>
+
+      <div class="auth-head">
+        <div class="auth-badge">JAVA LEARNING</div>
+        <h1 class="auth-title">С возвращением</h1>
+        <p class="auth-subtitle">
+          Войди в аккаунт, чтобы продолжить обучение, открыть уроки и сохранить свой прогресс.
+        </p>
+      </div>
+
+      <form method="post" class="auth-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="auth-alert">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <div class="auth-fields">
+          <div class="field">
+            <label class="field-label">Логин</label>
+            {{ form.username }}
+          </div>
+
+          <div class="field">
+            <label class="field-label">Пароль</label>
+            {{ form.password }}
+          </div>
+        </div>
+
+        <button class="btn btn-primary auth-submit" type="submit">
+          Войти
+        </button>
+
+        <div class="auth-bottom">
+          <span class="muted">Нет аккаунта?</span>
+          <a href="{% url 'register' %}" class="auth-link">Регистрация</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
