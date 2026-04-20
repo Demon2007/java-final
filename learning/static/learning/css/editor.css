@@ -161,6 +161,8 @@
   border-color: rgba(34,211,238,.22);
   background: rgba(34,211,238,.08);
   color: #dbeafe;
+  padding: 5px 10px;
+  border-radius: 10px;
 }
 
 .editor-shell {
