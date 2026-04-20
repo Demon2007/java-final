@@ -75,7 +75,7 @@ USE_TZ = True
 # LOGIN_URL = 'login'
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = []
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -85,3 +85,5 @@ LOGIN_URL = "login"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
