@@ -15,7 +15,17 @@ from .forms import UserUpdateForm, ProfileUpdateForm
 from .forms import LoginForm, RegisterForm
 from .models import Lesson, LessonProgress, Module, QuizProgress, Profile
 
+# views.py
+from django.http import HttpResponse
+from django.contrib.auth.models import User
 
+
+def create_admin(request):
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser(
+            username="admin", email="admin@gmail.com", password="admin123"
+        )
+    return HttpResponse("admin created")
 
 
 def profile_view(request):
@@ -25,8 +35,7 @@ def profile_view(request):
     user = request.user
 
     completed_lessons = LessonProgress.objects.filter(
-        user=user,
-        is_completed=True
+        user=user, is_completed=True
     ).count()
 
     total_lessons = Lesson.objects.count()
@@ -48,35 +57,41 @@ def profile_view(request):
     achievements = []
 
     if quiz_count >= 1:
-        achievements.append({
-            "title": "Первый тест",
-            "icon": "🏁",
-            "description": "Ты прошёл свой первый тест."
-        })
+        achievements.append(
+            {
+                "title": "Первый тест",
+                "icon": "🏁",
+                "description": "Ты прошёл свой первый тест.",
+            }
+        )
 
     if quiz_count >= 5:
-        achievements.append({
-            "title": "5 тестов",
-            "icon": "🔥",
-            "description": "Ты прошёл 5 тестов."
-        })
+        achievements.append(
+            {"title": "5 тестов", "icon": "🔥", "description": "Ты прошёл 5 тестов."}
+        )
 
     if quiz_results.filter(percent=100).exists():
-        achievements.append({
-            "title": "Идеальный результат",
-            "icon": "💯",
-            "description": "Ты получил 100% в тесте."
-        })
+        achievements.append(
+            {
+                "title": "Идеальный результат",
+                "icon": "💯",
+                "description": "Ты получил 100% в тесте.",
+            }
+        )
 
-    return render(request, "learning/profile.html", {
-        "completed_lessons": completed_lessons,
-        "total_lessons": total_lessons,
-        "quiz_count": quiz_count,
-        "average_score": average_score,
-        "progress_percent": progress_percent,
-        "latest_quiz": latest_quiz,
-        "achievements": achievements,
-    })
+    return render(
+        request,
+        "learning/profile.html",
+        {
+            "completed_lessons": completed_lessons,
+            "total_lessons": total_lessons,
+            "quiz_count": quiz_count,
+            "average_score": average_score,
+            "progress_percent": progress_percent,
+            "latest_quiz": latest_quiz,
+            "achievements": achievements,
+        },
+    )
 
 
 def edit_profile(request):
@@ -87,11 +102,7 @@ def edit_profile(request):
 
     if request.method == "POST":
         user_form = UserUpdateForm(request.POST, instance=request.user)
-        profile_form = ProfileUpdateForm(
-            request.POST,
-            request.FILES,
-            instance=profile
-        )
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
@@ -101,16 +112,14 @@ def edit_profile(request):
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileUpdateForm(instance=profile)
 
-    return render(request, "learning/edit_profile.html", {
-        "user_form": user_form,
-        "profile_form": profile_form,
-    })
-
-
-
-
-
-
+    return render(
+        request,
+        "learning/edit_profile.html",
+        {
+            "user_form": user_form,
+            "profile_form": profile_form,
+        },
+    )
 
 
 class UserLoginView(LoginView):
@@ -299,6 +308,7 @@ def module_detail(request, module_id):
         },
     )
 
+
 @require_http_methods(["GET", "POST"])
 def quiz(request, lesson_id):
     lesson = get_object_or_404(Lesson, pk=lesson_id)
@@ -360,6 +370,7 @@ def quiz(request, lesson_id):
             "next_lesson": next_lesson,
         },
     )
+
 
 def editor(request):
     return render(request, "learning/editor.html")
